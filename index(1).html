@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMS Titanic — Would You Have Survived?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0b1f2e;--navy-deep:#071620;--paper:#ece4d2;--brass:#b28c4a;--brass-bright:#d4ac68;--teal:#3c7873;--red-ink:#7c2a2a;--text-light:#f3ecd9;--text-muted:#9fb0b8}
+  *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--navy-deep);color:var(--text-light);font-family:'Spectral',serif;min-height:100vh}
+  body{background-image:radial-gradient(ellipse at 20% -10%,rgba(178,140,74,.10),transparent 45%),radial-gradient(ellipse at 100% 110%,rgba(60,120,115,.12),transparent 50%);display:flex;justify-content:center;padding:56px 20px 80px}
+  .wrap{width:100%;max-width:880px}.eyebrow{font-family:'IBM Plex Mono',monospace;letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--brass-bright);text-align:center;margin-bottom:14px}
+  .eyebrow::before,.eyebrow::after{content:"—";color:var(--teal);margin:0 10px} h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-style:italic;text-align:center;font-size:clamp(34px,5.5vw,58px);line-height:1.05;margin:0 0 10px}
+  .subhead{text-align:center;color:var(--text-muted);font-size:15.5px;max-width:460px;margin:0 auto 46px;line-height:1.6}
+  .ticket{background:var(--paper);color:#241c10;border-radius:6px;box-shadow:0 30px 60px -20px rgba(0,0,0,.55),0 0 0 1px rgba(178,140,74,.35);overflow:hidden;position:relative}
+  .ticket-top{display:flex;justify-content:space-between;align-items:center;padding:22px 30px;background:var(--navy);color:var(--text-light)}
+  .ticket-top .line-name{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;letter-spacing:.03em}.ticket-top .line-sub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--brass-bright);letter-spacing:.12em;text-transform:uppercase}
+  .ticket-body{padding:34px 36px 8px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px;margin-bottom:4px}
+  @media(max-width:560px){.field-row{grid-template-columns:1fr}}
+  .field{margin-bottom:22px}.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b5c3d;margin-bottom:7px}
+  .field select,.field input{width:100%;background:transparent;border:none;border-bottom:1.5px solid #a89568;font-family:'Spectral',serif;font-size:17px;color:#241c10;padding:6px 2px 8px;outline:none}
+  .field select:focus,.field input:focus{border-bottom-color:var(--red-ink)}.field select{cursor:pointer}
+  .perforation{position:relative;height:0;margin:12px 0 26px;border-top:2px dashed #b3a684}.perforation::before,.perforation::after{content:"";position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;background:var(--navy-deep)}
+  .perforation::before{left:-36px}.perforation::after{right:-36px}.submit-row{display:flex;justify-content:center;padding:0 36px 34px}
+  button.predict{font-family:'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;background:var(--red-ink);color:var(--text-light);border:none;padding:15px 34px;border-radius:3px;cursor:pointer}
+  button.predict:hover{background:#932f2f;transform:translateY(-1px)}button.predict:active{transform:translateY(0)}
+  .stub{background:var(--navy);color:var(--text-light);padding:30px 36px 34px;display:none;position:relative}.stub.show{display:block;animation:reveal .5s ease}
+  @keyframes reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .stamp{display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;padding:9px 18px;border:2px solid currentColor;border-radius:3px;transform:rotate(-3deg);margin-bottom:18px}
+  .stamp.survived{color:var(--teal)}.stamp.lost{color:#c2716f}.result-detail{font-size:15px;line-height:1.7;color:var(--text-muted);max-width:480px}.result-detail b{color:var(--text-light);font-weight:600}
+  .prob-bar-wrap{margin-top:20px;max-width:420px}.prob-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass-bright);display:flex;justify-content:space-between;margin-bottom:8px}
+  .prob-track{height:6px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}.prob-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--brass-bright));width:0%;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  footer{text-align:center;margin-top:40px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:var(--text-muted);opacity:.6}
+  @media(prefers-reduced-motion:reduce){.stub.show{animation:none}.prob-fill{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="eyebrow">White Star Line</div>
+<h1>Would You Have Survived the Titanic?</h1>
+<p class="subhead">Enter a passenger's details and the trained Logistic Regression model — built on the real Titanic passenger data — will predict their fate.</p>
+<div class="ticket">
+<div class="ticket-top"><div><div class="line-name">Passenger Manifest</div><div class="line-sub">RMS Titanic · April 1912</div></div><div class="line-sub" style="text-align:left">No. 3809‑A</div></div>
+<div class="ticket-body">
+<div class="field-row"><div class="field"><label for="pclass">Passenger Class</label><select id="pclass"><option value="1">1st Class</option><option value="2">2nd Class</option><option value="3" selected>3rd Class</option></select></div>
+<div class="field"><label for="title">Title</label><select id="title"><option value="Mr">Mr</option><option value="Mrs">Mrs</option><option value="Miss">Miss</option><option value="Master">Master</option><option value="Rare">Rare (Dr, Rev, Col…)</option></select></div></div>
+<div class="field-row"><div class="field"><label for="sex">Sex</label><select id="sex"><option value="male">Male</option><option value="female">Female</option></select></div><div class="field"><label for="age">Age</label><input type="number" id="age" value="29" min="0" max="100"></div></div>
+<div class="field-row"><div class="field"><label for="sibsp">Siblings / Spouses Aboard</label><input type="number" id="sibsp" value="0" min="0" max="10"></div><div class="field"><label for="parch">Parents / Children Aboard</label><input type="number" id="parch" value="0" min="0" max="10"></div></div>
+<div class="field-row"><div class="field"><label for="fare">Fare Paid (£)</label><input type="number" id="fare" value="14" min="0" max="600" step="0.1"></div>
+<div class="field"><label for="embarked">Port of Embarkation</label><select id="embarked"><option value="S" selected>Southampton</option><option value="C">Cherbourg</option><option value="Q">Queenstown</option></select></div></div>
+</div>
+<div class="perforation"></div>
+<div class="submit-row"><button class="predict" onclick="predict()">Punch Ticket &amp; Predict</button></div>
+<div class="stub" id="stub"><div class="stamp" id="stamp">—</div><div class="result-detail" id="detail"></div><div class="prob-bar-wrap"><div class="prob-label"><span>Survival Probability</span><span id="probText">0%</span></div><div class="prob-track"><div class="prob-fill" id="probFill"></div></div></div></div>
+</div>
+<footer>Model: Logistic Regression · Trained on Kaggle Titanic dataset (train.csv) · CV Accuracy 0.819</footer>
+</div>
+<script>
+const FEATURE_ORDER=['Pclass','Sex','Age','SibSp','Parch','Fare','Embarked','FamilySize','IsAlone','Title_Miss','Title_Mr','Title_Mrs','Title_Rare'];
+const COEF=[-1.0128298968296652,1.0050771630677104,-0.03152798613850514,-0.25393001288519523,-0.05911080158837812,0.003386794971824574,0.22465096272228688,-0.317551807226633,-0.4457966920344386,-0.6076077036674977,-2.3545838629880818,0.06567802287232642,-1.5427437830704867];
+const INTERCEPT=4.59734957364339;
+function predict(){
+const pclass=parseInt(document.getElementById('pclass').value),sexRaw=document.getElementById('sex').value,age=parseFloat(document.getElementById('age').value)||0,sibsp=parseInt(document.getElementById('sibsp').value)||0,parch=parseInt(document.getElementById('parch').value)||0,fare=parseFloat(document.getElementById('fare').value)||0,embarkedRaw=document.getElementById('embarked').value,title=document.getElementById('title').value;
+const sex=sexRaw==='male'?0:1,embarked=embarkedRaw==='S'?0:(embarkedRaw==='C'?1:2),familySize=sibsp+parch+1,isAlone=familySize===1?1:0;
+const titleMiss=title==='Miss'?1:0,titleMr=title==='Mr'?1:0,titleMrs=title==='Mrs'?1:0,titleRare=title==='Rare'?1:0;
+const values=[pclass,sex,age,sibsp,parch,fare,embarked,familySize,isAlone,titleMiss,titleMr,titleMrs,titleRare];
+let z=INTERCEPT;for(let i=0;i<values.length;i++)z+=COEF[i]*values[i];
+const prob=1/(1+Math.exp(-z)),survived=prob>=0.5;
+const stub=document.getElementById('stub'),stamp=document.getElementById('stamp'),detail=document.getElementById('detail'),probFill=document.getElementById('probFill'),probText=document.getElementById('probText');
+stamp.textContent=survived?'SURVIVED':'LOST AT SEA';stamp.className='stamp '+(survived?'survived':'lost');
+detail.innerHTML=survived?`<b>According to the model, this passenger would have survived.</b> Predicted survival probability: ${(prob*100).toFixed(1)}%, based on class, sex, age, and the other details entered.`:`<b>According to the model, this passenger would not have survived.</b> Predicted survival probability was only ${(prob*100).toFixed(1)}%, based on the details entered.`;
+probFill.style.width=(prob*100).toFixed(1)+'%';probText.textContent=(prob*100).toFixed(1)+'%';stub.classList.add('show');
+}
+</script>
+</body>
+</html>
